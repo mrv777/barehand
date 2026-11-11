@@ -257,13 +257,18 @@ def test_qmp_spec_uses_a_private_temp_dir_when_the_machine_dir_is_too_deep(tmp_p
             import shutil; shutil.rmtree(private, ignore_errors=True)
 
 
+# The stub keeps the shell (and so the original command line) as the process, as QEMU does: `exec sleep`
+# would replace the command line that `is_our_qemu` checks, which /proc shows on Linux.
+_STUB_QEMU = "#!/bin/sh\ntrap 'kill $c 2>/dev/null; exit 0' TERM INT\nsleep 300 &\nc=$!\nwait $c\n"
+
+
 # --- up / down against stub executables (no real QEMU) ------------------------------------------------
 @pytest.fixture
 def stub_qemu(tmp_path, monkeypatch):
     bindir = tmp_path / "stubbin"
     bindir.mkdir()
-    qemu = _exe(bindir / "qemu-system-x86_64", "#!/bin/sh\nexec sleep 300\n")
-    _exe(bindir / "qemu-system-aarch64", "#!/bin/sh\nexec sleep 300\n")
+    qemu = _exe(bindir / "qemu-system-x86_64", _STUB_QEMU)
+    _exe(bindir / "qemu-system-aarch64", _STUB_QEMU)
     img = _exe(bindir / "qemu-img",
                "#!/bin/sh\nfor last; do :; done\nif [ \"$1\" = create ]; then : > \"$5\"; else : > \"$last\"; fi\n")
     fw = tmp_path / "fw"

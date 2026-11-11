@@ -83,6 +83,12 @@ class FakeRFB:
     def stop(self) -> None:
         self._stop = True
         try:
+            # On Linux a listening socket closed from another thread keeps accepting until the blocked
+            # accept() returns; shutdown wakes it. macOS raises ENOTCONN here, which is fine.
+            self._srv.shutdown(socket.SHUT_RDWR)
+        except OSError:
+            pass
+        try:
             self._srv.close()
         except OSError:
             pass
