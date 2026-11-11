@@ -1,0 +1,13 @@
+Fixtures for tests/test_text*.py
+
+*.png            Screenshots of QEMU 11.1.3 guests (Alpine Linux 3.24 virt ISO, EDK2 edk2-stable202408 firmware as
+                 built by Homebrew's qemu package, GRUB 2.14 from the Alpine ISO) taken through QMP screendump, plus
+                 a few synthetic crops. They are test data, not part of the plugin.
+edk2_atlas.json  Glyph bitmaps (8x19, 239 glyphs) of the default EDK2 HII font, read out of the firmware image
+                 edk2-x86_64-code.fd by barehand.text.atlas_from_edk2_fd. EDK2 is licensed BSD-2-Clause-Patent
+                 (SPDX), Copyright (c) TianoCore and contributors; see the copy of the licence in QEMU's
+                 edk2-licenses.txt. This file is only used by the tests; the plugin itself derives the same data
+                 from the user's own firmware at runtime and ships no font data.
+                 There is deliberately no Linux console atlas here: the tests build it with barehand.text.calibrate
+                 from linux_calib_login.png (the frame taken after the 94 printable ASCII characters were typed at
+                 a login prompt), which is exactly what the plugin does in a guest.

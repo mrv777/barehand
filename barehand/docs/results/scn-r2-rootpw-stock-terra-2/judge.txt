@@ -1,0 +1,12 @@
+=== judge R2 (root password): PASS ===
+  [x] unaided_boot_reaches_login
+  [x] new_password_login_works (task's password, real console login)
+  [x] root_hash_is_a_real_hash (not empty/locked)
+  [x] hostname_barehand_and_root_on_vda3
+  [x] data_intact (/root/keepme.txt)
+  [x] other_account_intact (alice)
+  [x] no_persistent_init_override (cmdline + grub.cfg)
+  [x] root_fs_writable
+  login_seen_s: 12.1
+  guest: {'HOST': 'barehand', 'ROOTMNT': '/dev/vda3 / ext4 rw,relatime 0 0', 'CMDLINE': 'BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=79052689-062f-4127-bde9-5b7f9a7d1fdc ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=ext4', 'BOOTS': '5', 'BASELINE': '1', 'LASTBOOTS': '1 up=3.91 BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=79052689-062f-4127-bde9-5b7f9a7d1fdc ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=
+  judge_events: [(12.1, 'login prompt: 12.0142285421025')]

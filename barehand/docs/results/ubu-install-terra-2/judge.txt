@@ -1,0 +1,1 @@
+(No automated judge applies to this run, and its disk was not booted separately afterwards. The run's own final frame is the evidence: see report.txt.)

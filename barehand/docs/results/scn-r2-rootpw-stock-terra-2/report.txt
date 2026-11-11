@@ -1,0 +1,8 @@
+tool calls        : 83  {'skill_view': 1, 'barehand_machine': 11, 'computer_use': 66, 'web_search': 3, 'web_extract': 1, 'skill_manage': 1}
+computer_use      : {'capture': 2, 'key': 30, 'wait': 3, 'type': 31}
+barehand_machine  : {'status': 1, 'snapshot_save': 1, 'reset': 6, 'wait_for_text': 3}
+tool errors       : 1   approval-blocked: 0
+session local-73e76f  model=gpt-6.1-terra  api_calls=82  in=246  out=8494  cache_r=7604450  cache_w=171395  cost=$0.6371822500000001  (estimated/provider_models_api)  end=None
+image lane        : NATIVE (no aux markers, no aux vision usage) | avg prompt tokens/call: 94830
+final answer      : I reset the root password to Fresh-Start-7 using a temporary recovery boot, then removed the recovery helper and restarted normally. I did not reinstall or wipe the machine.  After the restart, I logged in as root with the new password. The screen showed “Welcome to Alpine!” and the root prompt, “barehand:~#”. I then logged out, leaving the machine at the normal login prompt on tty2.
+summary           : <path>

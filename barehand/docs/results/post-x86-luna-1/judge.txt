@@ -1,0 +1,12 @@
+=== judge_install: PASS  (evidence mode: serial-probe) ===
+  [x] offline_esp_with_bootloader
+  [x] booted_without_cdrom
+  [x] guest_hostname_matches
+  [x] root_is_real_disk_not_live
+  [x] booted_via_uefi
+  guest   : {'HOST': 'barehand', 'ETCHOST': 'barehand', 'CMDLINE': 'BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=83d07a59-e64c-4faf-af78-a45bf2a4ee6b ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=ext4', 'EFI': '/sys/firmware/efi', 'RELEASE': '3.24.4', 'SR': '/dev/cdrom /dev/sr0', 'ROOTMNT': '/dev/vda3 / ext4 rw,relatime 0 0'}
+  df /    : Filesystem           1K-blocks      Used Available Use% Mounted on | /dev/vda3              5835408    114336   5403736   2% /
+  disk GPT: [(1, 'c12a7328', 264.0), (2, '0657fd6d', 2048.0), (3, '0fc63daf', 5878.0)]
+  ESP     : ['alpine/', 'boot/'] ['bootx64.efi']
+  console (OCR tail): See <https://wiki.alpinelinux.org/>. / You can setup the system with the conmand: setup-alpine / You may change this message by editing etc/notd. / barehand:~# { echo BHJ_BEGIN: echo HOST=$Chostname): echo ETCHOST=S(cat /etc/hostname): echo CMDLINE=S(cat /proc/cmdline): echo EFI=$(1s -d /sys/firmuar
+  report  : <path>   screenshot: <path>

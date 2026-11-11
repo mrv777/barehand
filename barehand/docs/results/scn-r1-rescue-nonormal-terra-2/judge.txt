@@ -1,0 +1,11 @@
+=== judge R1 (r1-rescue-nonormal): PASS ===
+  [x] fix_permanent__unaided_boot_reaches_login
+  [x] fix_permanent__root_login_hostname_ok
+  [x] fix_permanent__grub_cfg_on_disk
+  [x] booted_once__linux_ran_during_the_run
+  judge_boot_state: login
+  login_seen_s: 11.3
+  boots_during_run: 2
+  final_screen_of_run: login
+  guest: {'HOST': 'barehand', 'ROOTMNT': '/dev/vda3 / ext4 rw,relatime 0 0', 'CMDLINE': 'BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=79052689-062f-4127-bde9-5b7f9a7d1fdc ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=ext4', 'BOOTS': '4', 'BASELINE': '1', 'LASTBOOTS': '1 up=4.68 BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=79052689-062f-4127-bde9-5b7f9a7d1fdc ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=
+  judge_events: [(11.3, 'login prompt: 11.233879833016545')]

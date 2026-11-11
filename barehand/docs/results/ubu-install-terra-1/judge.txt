@@ -1,0 +1,2 @@
+(The automated install judge covers x86_64 Alpine only and does not apply to this run.)
+Verification: a copy of the disk was booted with no installer attached and no keys sent; it reached "Ubuntu 26.04.1 LTS barehand tty1" and "barehand login:" (unaided-boot.png).

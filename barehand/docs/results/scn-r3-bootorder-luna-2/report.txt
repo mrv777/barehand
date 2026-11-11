@@ -1,0 +1,8 @@
+tool calls        : 76  {'skill_view': 1, 'barehand_machine': 3, 'computer_use': 72}
+computer_use      : {'capture': 2, 'type': 17, 'key': 53}
+barehand_machine  : {'status': 1, 'reset': 1, 'wait_for_text': 1}
+tool errors       : 0   approval-blocked: 0
+session local-096eb3  model=gpt-6-luna  api_calls=76  in=228  out=12029  cache_r=5745405  cache_w=130651  cost=$0.079822725  (estimated/official_docs_snapshot)  end=None
+image lane        : NATIVE (no aux markers, no aux vision usage) | avg prompt tokens/call: 77320
+final answer      : The firmware had no Alpine boot entry, so it was dropping into the UEFI shell instead of starting the disk’s EFI loader.  In the firmware menus, I added an “Alpine Linux” entry for `EFI\alpine\grubaa64.efi`, moved it to the top of the boot order, and saved the configuration. This is a lasting firmware setting, not a one-time boot choice.  After a plain restart with no keyboard input, the screen sh
+summary           : <path>

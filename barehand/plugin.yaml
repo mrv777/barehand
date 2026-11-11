@@ -1,0 +1,139 @@
+name: barehand
+version: 0.1.0
+manifest_version: 2
+description: >-
+  Operates a machine through its screen and keyboard with nothing installed on it. A computer_use provider for QEMU virtual machines over QMP, or any VNC console (tested only against QEMU's VNC server), for firmware menus, boot loaders and OS installers.
+author: Barehand contributors
+license: MIT
+requires_hermes: ">=0.23.0"
+platforms: [linux, macos]   # POSIX hosts only in v0 (Windows unsupported)
+tags: [computer-use, qemu, vnc, vm, bootloader, firmware]
+# Explicit kind: without it Hermes sees the provider marker in __init__.py and files this directory
+# as `exclusive`, which the ordinary plugin manager never loads. The computer-use loader ignores `kind`.
+kind: standalone
+# Ordinary-plugin half (only when enabled): tool barehand_machine, a pre_tool_call hook that ESCALATES
+# destructive machine actions to the human-approval gate (it never approves anything), CLI command,
+# slash command, skill, system-prompt section. Provider half: ctx.register_computer_use_provider.
+# No privileged capabilities are needed or used.
+provides_tools:
+  - barehand_machine
+provides_hooks:
+  - pre_tool_call
+capabilities: []
+config_schema:
+  transport:
+    type: str
+    default: ""
+    description: "How to reach the machine: qmp (a QEMU started by `hermes barehand up`, or attached via `qmp`) or vnc (a plain VNC server; tested against QEMU -vnc only, other VNC consoles are untested). Empty = vnc if only a VNC address is set, else qmp. VNC has no snapshots, reset, eject or power control. VNC is not encrypted (weak DES password, keystrokes in clear), so use it on a trusted network or through an SSH tunnel to 127.0.0.1."
+  qmp:
+    type: str
+    default: ""
+    description: "transport qmp: attach to an already-running QEMU: its QMP address, loopback host:port or unix:/path. Empty = use the machine started by `hermes barehand up`."
+  vnc_host:
+    type: str
+    default: ""
+    description: "transport vnc: host of the VNC server (only this host is ever contacted). Non-loopback needs allow_remote. VNC is unencrypted: use a trusted network or an SSH tunnel (ssh -L 5900:127.0.0.1:5900 host) and point this at 127.0.0.1."
+  vnc_port:
+    type: int
+    default: 5900
+    description: "transport vnc: TCP port of the VNC server (5900 + display number)."
+  vnc:
+    type: str
+    default: ""
+    description: "transport vnc, alternative to vnc_host/vnc_port: host:port, host::port, host:N (display N = port 5900+N) or unix:/path. Env BAREHAND_VNC overrides."
+  vnc_password_env:
+    type: str
+    default: ""
+    description: "transport vnc: NAME of the environment variable holding the VNC password (never the password itself). VNC authentication uses at most the first 8 characters and is weak; it does not encrypt the session."
+  vnc_encodings:
+    type: str
+    default: "zrle,hextile,copyrect,raw"
+    description: "transport vnc: preferred encodings in order (zrle, hextile, zlib, copyrect, raw). raw is always added as a fallback; use zrle,raw over slow links."
+  vnc_timeout:
+    type: float
+    default: 10
+    description: "transport vnc: seconds before a connect or read gives up."
+  machine:
+    type: str
+    default: default
+    description: "Name of the machine managed by `hermes barehand` (state under the plugin data dir)."
+  allow_remote:
+    type: bool
+    default: false
+    description: "Permit a non-loopback QMP or VNC host. QMP is unauthenticated full control and VNC is unencrypted; prefer an SSH tunnel to 127.0.0.1."
+  arch:
+    type: str
+    default: auto
+    description: "Guest architecture for `hermes barehand up`: auto, x86_64 or aarch64. auto = the ISO's own architecture, else the machine's existing disk, else this host's (aarch64 under HVF/KVM is faster on arm64 hosts). Fixed for the life of a machine's disk."
+  qemu_binary:
+    type: str
+    default: ""
+    description: "Path to qemu-system-x86_64 (or qemu-system-aarch64) when it is not on PATH or in a standard location; the binary for the other architecture is looked up next to it."
+  firmware_code:
+    type: str
+    default: ""
+    description: "Path to the UEFI code image (edk2-x86_64-code.fd / OVMF_CODE.fd) if auto-discovery fails."
+  firmware_vars:
+    type: str
+    default: ""
+    description: "Path to the UEFI variable-store template (edk2-i386-vars.fd / OVMF_VARS.fd) if auto-discovery fails."
+  firmware_code_aarch64:
+    type: str
+    default: ""
+    description: "aarch64 guests: path to the UEFI code image (edk2-aarch64-code.fd / AAVMF_CODE.fd) if auto-discovery fails. Images smaller than 64 MiB are padded in a private copy."
+  firmware_vars_aarch64:
+    type: str
+    default: ""
+    description: "aarch64 guests: path to the UEFI variable-store template (edk2-arm-vars.fd / AAVMF_VARS.fd) if auto-discovery fails."
+  settle_quiet:
+    type: float
+    default: 0.7
+    description: "Seconds the screen must stay quiet (a blinking cursor is ignored) after an input before the action returns."
+  settle_timeout:
+    type: float
+    default: 8.0
+    description: "Give up waiting for the screen to settle after this many seconds (animated screens)."
+  settle_delay:
+    type: float
+    default: 0.2
+    description: "Seconds to let the guest start reacting before the first settle frame is compared."
+  settle_poll:
+    type: float
+    default: 0.25
+    description: "Seconds between frames while waiting for the screen to settle."
+  key_hold_ms:
+    type: int
+    default: 60
+    description: "How long each key is held down, in milliseconds."
+  type_hold_ms:
+    type: int
+    default: 0
+    description: "Hold time per character for the type action, in milliseconds. 0 = automatic by guest architecture and accelerator (10 ms hardware-accelerated, 15 ms software emulation). Long holds make the guest lag the host: 60 ms lags ~12 s after 150 characters."
+  settle_blink:
+    type: float
+    default: 1.2
+    description: "Seconds a one-way cursor-sized screen change may wait for the previous frame to come back before it counts as a change (typed text) rather than a blinking caret."
+  record:
+    type: bool
+    default: true
+    description: "Flight recorder: write an append-only ledger of every action plus the distinct frames (PNG) and an index.html viewer under the plugin data dir (recordings/). Files are 0600."
+  record_typed_text:
+    type: bool
+    default: false
+    description: "Store typed strings in the recording (then passwords too). Off by default: only the length is stored. Key chords and screenshots are always recorded; set record: false to record nothing."
+  record_keep_sessions:
+    type: int
+    default: 10
+    description: "Keep this many recorded sessions (the oldest finished ones are deleted when a new session starts; a session another process is writing is never deleted)."
+  record_max_frames:
+    type: int
+    default: 2000
+    description: "Per session: stop storing screenshots after this many distinct frames (actions are still recorded)."
+  record_max_mb:
+    type: int
+    default: 200
+    description: "Per session: stop storing screenshots after this many MiB."
+  record_max_total_mb:
+    type: int
+    default: 2000
+    description: "Total size of all recordings in MiB; the oldest finished sessions are deleted when a new session starts and the total is above this."

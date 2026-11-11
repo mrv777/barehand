@@ -1,0 +1,8 @@
+tool calls        : 18  {'skill_view': 1, 'barehand_machine': 5, 'computer_use': 12}
+computer_use      : {'capture': 3, 'type': 1, 'wait': 1, 'key': 7}
+barehand_machine  : {'status': 1, 'snapshot_save': 1, 'reset': 2, 'wait_for_text': 1}
+tool errors       : 0   approval-blocked: 0
+session local-c27a22  model=gpt-6.1-terra  api_calls=17  in=51  out=654  cache_r=403924  cache_w=33083  cost=$0.06487095000000001  (estimated/provider_models_api)  end=None
+image lane        : NATIVE (no aux markers, no aux vision usage) | avg prompt tokens/call: 25709
+final answer      : The firmware tried the EFI Internal Shell before the disk, so it stopped at the shell prompt.  I used the firmware menus to move “UEFI Misc Device” ahead of the shell and committed the boot order. This is a lasting setting, not a one-time boot.  After a plain restart with no keyboard input, the screen showed “Welcome to Alpine Linux 3.24” and the “barehand login:” prompt.
+summary           : <path>

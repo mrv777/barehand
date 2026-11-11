@@ -1,0 +1,8 @@
+=== judge R3 (boot order): PASS ===
+  [x] permanent__unaided_boot_with_run_vars_reaches_login
+  [x] permanent__hostname_and_root_ok
+  judge_boot_state: login
+  login_seen_s: 11.5
+  booted_once_info: {'boots_during_run': None, 'final_screen_of_run': 'login'}
+  guest: {'HOST': 'barehand', 'ROOTMNT': '/dev/vda3 / ext4 rw,relatime 0 0', 'CMDLINE': 'BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=79052689-062f-4127-bde9-5b7f9a7d1fdc ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=ext4', 'BOOTS': '1', 'BASELINE': '', 'LASTBOOTS': '1 up=3.93 BOOT_IMAGE=/boot/vmlinuz-virt root=UUID=79052689-062f-4127-bde9-5b7f9a7d1fdc ro modules=sd-mod,usb-storage,ext4 quiet rootfstype=e
+  judge_events: [(11.5, 'login prompt: 11.354943542042747')]

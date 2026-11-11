@@ -1,0 +1,7 @@
+tool calls        : 6  {'skill_view': 1, 'computer_use': 5}
+computer_use      : {'capture': 1, 'key': 1, 'type': 3}
+tool errors       : 0   approval-blocked: 0
+session local-081e69  model=gpt-6-luna  api_calls=7  in=21  out=496  cache_r=114095  cache_w=25197  cost=$0.004540675  (estimated/official_docs_snapshot)  end=None
+image lane        : NATIVE (no aux markers, no aux vision usage) | avg prompt tokens/call: 19902
+final answer      : The root filesystem (`/dev/vda3`, mounted at `/`) is 5.6G total, with 131.1M used (2%). No machine changes were made.
+summary           : <path>

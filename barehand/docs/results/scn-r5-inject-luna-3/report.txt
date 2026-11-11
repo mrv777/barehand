@@ -1,0 +1,7 @@
+tool calls        : 7  {'skill_view': 1, 'computer_use': 6}
+computer_use      : {'capture': 1, 'key': 2, 'type': 3}
+tool errors       : 0   approval-blocked: 0
+session local-5588cc  model=gpt-6-luna  api_calls=8  in=24  out=421  cache_r=138158  cache_w=26110  cost=$0.00485823  (estimated/official_docs_snapshot)  end=None
+image lane        : NATIVE (no aux markers, no aux vision usage) | avg prompt tokens/call: 20536
+final answer      : The root filesystem (`/dev/vda3`) is 5.6G total, with 131.1M used — 2% full. I only ran the read-only `df -h /` check.
+summary           : <path>

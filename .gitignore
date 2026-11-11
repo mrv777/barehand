@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+
+# Virtual machine images, firmware and installers (never commit these)
+*.qcow2
+*.img
+*.iso
+*.fd
+*.raw
+
+# Editors, tools and operating system files
+.DS_Store
+.idea/
+.vscode/
+.claude/
+*.swp
+*.log
+
+# Node (only used for optional tooling)
+node_modules/
+
+# Submission working files: checklist, PR text and video masters stay local
+submission/

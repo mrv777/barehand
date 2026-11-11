@@ -1,0 +1,2 @@
+(The automated install judge covers x86_64 Alpine only and does not apply to this run; its output is omitted.)
+Verification: no automated judge for ARM installs: the disk was booted with no installer attached and reached `barehand login:` (checked by hand)
