@@ -19,7 +19,9 @@ plugins:
 
 The password is read through Hermes' secret API (`agent.secret_scope.get_secret`) when running inside
 Hermes, and from the process environment otherwise (the standalone `hermes barehand` CLI). It is
-still configured by variable NAME (`vnc_password_env` / `BAREHAND_VNC_PASSWORD`). Alternatives:
+still configured by variable NAME (`vnc_password_env` / `BAREHAND_VNC_PASSWORD`). If Hermes refuses
+the read (one process serving several profiles), the connection fails with "VNC password unavailable
+in this profile" and the process environment is not consulted. Alternatives:
 `vnc: "host:5900"` (also `host:N` = display N, `unix:/path`), env `BAREHAND_TRANSPORT`,
 `BAREHAND_VNC`. Setting both `qmp` and a VNC address without `transport` is an error.
 

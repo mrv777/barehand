@@ -158,7 +158,12 @@ def test_read_secret_uses_hermes_secret_api_when_present_and_environ_otherwise(m
     assert tv.read_secret("X_PW", {"X_PW": "explicit"}) == "explicit"      # an explicit mapping bypasses it
     assert tv.password_from_env("X_PW") == "from-hermes"
     stub.get_secret = lambda name, default=None: (_ for _ in ()).throw(RuntimeError("unscoped"))
-    assert tv.read_secret("X_PW") == "from-env"                           # an API failure falls back to environ
+    with pytest.raises(tv.VNCError, match="unavailable in this profile"):   # a refused read never falls back
+        tv.read_secret("X_PW")
+    with pytest.raises(tv.VNCError, match="unavailable in this profile"):
+        tv.password_from_env("X_PW")
+    monkeypatch.setenv(tv.DEFAULT_PASSWORD_ENV, "launch-profile-pw")       # the unnamed default: no password
+    assert tv._default_password_set(None) is False
     monkeypatch.setitem(sys.modules, "agent.secret_scope", None)           # import fails: standalone CLI
     assert tv.read_secret("X_PW") == "from-env"
     assert tv.read_secret("NOPE_PW") is None

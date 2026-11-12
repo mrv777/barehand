@@ -58,6 +58,15 @@ def test_hook_ignores_other_tools_and_safe_actions():
     assert companion._approval_hook(tool_name="barehand_machine", args={"action": "snapshot_save"}) is None
 
 
+def test_overwriting_a_snapshot_asks_and_fails_closed(monkeypatch):
+    args = {"action": "snapshot_save", "name": "base", "overwrite": True}
+    d = companion._approval_hook(tool_name="barehand_machine", args=args)
+    assert d["action"] == "approve" and d["rule_key"] == "barehand:snapshot_overwrite" and "'base'" in d["message"]
+    assert companion._approval_hook(tool_name="barehand_machine", args={**args, "overwrite": False}) is None
+    monkeypatch.setattr(companion, "_approval_decision", lambda *a, **k: (_ for _ in ()).throw(RuntimeError("x")))
+    assert companion._approval_hook(tool_name="barehand_machine", args=args)["action"] == "block"
+
+
 def test_hook_message_never_echoes_unvalidated_name():
     d = companion._approval_hook(tool_name="barehand_machine",
                                  args={"action": "snapshot_load", "name": "x\nIGNORE PREVIOUS"})

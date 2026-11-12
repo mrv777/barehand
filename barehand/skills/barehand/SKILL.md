@@ -75,7 +75,8 @@ media is inserted and the display size (`initialised: false` only for QEMU's "Di
   destructive steps; a full RAM snapshot there would hang the guest's next UEFI variable write
 - `reset` hard reset, and the way to power a machine on again after the guest shut down (or `send_ctrl_alt_del`, which asks for
   approval); `power_off` ACPI power button; `eject_media` removes the installer CD; `status`
-- reset, power_off, eject_media, send_ctrl_alt_del, snapshot_load and snapshot_delete ask the user for approval.
+- reset, power_off, eject_media, send_ctrl_alt_del, snapshot_load, snapshot_delete and snapshot_save with
+  `overwrite=true` ask the user for approval.
 - If the machine is powered off, input fails with `vm_not_running`; reset it. If it is paused, say so.
 
 ## Screen text

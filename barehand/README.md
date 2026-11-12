@@ -232,9 +232,10 @@ replaces with disk checkpoints (see [Limits](#limits)). The Debian install has n
   `hermes barehand recordings purge --yes` deletes it; details under
   [Flight recorder](docs/reference.md#flight-recorder).
 - One `pre_tool_call` hook is registered. It escalates `reset`, `power_off`, `eject_media`,
-  `send_ctrl_alt_del`, `snapshot_load` and `snapshot_delete`. The `barehand_machine` actions that do
-  not ask are `status`, `snapshot_list`, `snapshot_save`, `calibrate_text` (it types keys, like a
-  `type` call) and `wait_for_text`.
+  `send_ctrl_alt_del`, `snapshot_load`, `snapshot_delete` and a `snapshot_save` that overwrites an
+  existing snapshot. The `barehand_machine` actions that do not ask are `status`, `snapshot_list`,
+  `snapshot_save` under a new name, `calibrate_text` (it types keys, like a `type` call) and
+  `wait_for_text`.
 - Barehand reads the ISO you name and standard QEMU firmware locations, never credentials, `.env` or
   keychains. There is no self-update and no core patching, and approvals are never bypassed. A VM is
   not a safety boundary for what the model types into an installer: snapshot first.

@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import threading
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from . import cli, config, ledger, machine, screentext, transport
 from .machine import _SNAP_NAME
@@ -22,6 +22,7 @@ NEEDS_APPROVAL = {"reset": "Hard-reset the target machine (unsaved state in the 
                                    "hardware acceleration it restores the disk and restarts the machine)",
                   "snapshot_delete": "Delete a machine snapshot",
                   "send_ctrl_alt_del": "Send Ctrl+Alt+Delete to the target machine (it may reboot)"}
+OVERWRITE_WHY = "Replace an existing machine snapshot (the old checkpoint is lost)"
 # Actions that need the hypervisor: refused over the VNC transport (before any approval prompt).
 VNC_REFUSED = {"snapshot_list", "snapshot_save", "snapshot_load", "snapshot_delete", "reset", "power_off",
                "eject_media"}
@@ -33,7 +34,7 @@ SCHEMA: Dict[str, Any] = {
     "description": (
         "Control the Barehand target machine itself (not its screen); for screen, keyboard and mouse use "
         "computer_use. Actions that ask the user for approval: reset, power_off, eject_media, snapshot_load, "
-        "snapshot_delete, send_ctrl_alt_del. No approval: status, snapshot_list, snapshot_save (do it before any "
+        "snapshot_delete, send_ctrl_alt_del, snapshot_save with overwrite. No approval: status, snapshot_list, snapshot_save (do it before any "
         "risky step; on Apple Silicon with hardware acceleration a snapshot is a disk checkpoint and loading it "
         "restarts the machine from that disk state), wait_for_text, calibrate_text. reset with enter_setup=true lands in the firmware setup menu "
         "(computer_use blocks ctrl+alt+delete). wait_for_text waits up to 240 s (default 60; call again if it "
@@ -54,7 +55,7 @@ SCHEMA: Dict[str, Any] = {
         "action": {"type": "string", "enum": ACTIONS},
         "name": {"type": "string", "description": "Snapshot name (letters, digits, . _ -), for snapshot_* actions."},
         "overwrite": {"type": "boolean", "description": "snapshot_save only: allow replacing an existing snapshot "
-                                                        "(default: refuse)."},
+                                                        "(default: refuse; true asks the user for approval)."},
         "enter_setup": {"type": "boolean", "description": "reset only: after the reset keep pressing Escape "
                                                          "(a few seconds to about 35 s depending on the guest) so the firmware "
                                                          "setup menu is showing when this returns."},
@@ -243,8 +244,7 @@ def _approval_hook(tool_name: str = "", args: Any = None, **_: Any):
         return _approval_decision(tool_name, args)
     except Exception:  # noqa: BLE001
         try:
-            if tool_name == TOOL and isinstance(args, dict) and \
-                    str(args.get("action", "")).strip().lower() in NEEDS_APPROVAL:
+            if tool_name == TOOL and isinstance(args, dict) and _approval_reason(args) is not None:
                 return {"action": "block", "message": "BLOCKED: Barehand could not decide whether this machine "
                                                       "action needs approval; refusing it."}
         except Exception:  # noqa: BLE001
@@ -256,7 +256,7 @@ def _approval_decision(tool_name: str, args: Any):
     if tool_name != TOOL or not isinstance(args, dict):
         return None
     action = str(args.get("action", "")).strip().lower()
-    why = NEEDS_APPROVAL.get(action)
+    why = _approval_reason(args)
     if why is None:
         return None
     try:
@@ -267,7 +267,17 @@ def _approval_decision(tool_name: str, args: Any):
     # The human sees this text: only a validated snapshot name is ever echoed, never model-supplied prose.
     tag = args.get("name")
     suffix = f" '{tag}'" if isinstance(tag, str) and _SNAP_NAME.fullmatch(tag) else ""
-    return {"action": "approve", "message": f"{why}{suffix}", "rule_key": f"barehand:{action}"}
+    key = "snapshot_overwrite" if why is OVERWRITE_WHY else action
+    return {"action": "approve", "message": f"{why}{suffix}", "rule_key": f"barehand:{key}"}
+
+
+def _approval_reason(args: Dict[str, Any]) -> Optional[str]:
+    """Why this call needs a human, or None. Saving a snapshot is free; replacing one destroys the old
+    checkpoint, so it asks (same truthiness as the handler uses for ``overwrite``)."""
+    action = str(args.get("action", "")).strip().lower()
+    if action == "snapshot_save" and args.get("overwrite"):
+        return OVERWRITE_WHY
+    return NEEDS_APPROVAL.get(action)
 
 
 def _clip(value: Any, limit: int = 80) -> str:

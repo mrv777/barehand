@@ -140,7 +140,9 @@ atexit.register(shutdown_all)
 def read_secret(name: str, environ: Optional[Mapping[str, str]] = None) -> Optional[str]:
     """One secret by variable name, never logged. Inside Hermes this goes through its public secret API
     (``agent.secret_scope.get_secret``, which honours profile scoping); outside Hermes (the standalone CLI) or
-    when an explicit ``environ`` mapping is given, it is a plain environment lookup."""
+    when an explicit ``environ`` mapping is given, it is a plain environment lookup. When Hermes refuses the
+    read (one process serving several profiles) this raises: the process environment belongs to the launch
+    profile, so it is never used as a fallback."""
     if environ is not None:
         return environ.get(name)
     try:
@@ -149,8 +151,17 @@ def read_secret(name: str, environ: Optional[Mapping[str, str]] = None) -> Optio
         return os.environ.get(name)
     try:
         return get_secret(name)
-    except Exception:  # noqa: BLE001 - e.g. an unscoped read under multiplexing: fall back to the process env
-        return os.environ.get(name)
+    except Exception:  # noqa: BLE001 - e.g. an unscoped read under multiplexing
+        raise VNCError(f"VNC password unavailable in this profile (Hermes refused to read {name})") from None
+
+
+def _default_password_set(environ: Optional[Mapping[str, str]]) -> bool:
+    """Whether the default password variable holds a value. Nothing names it in the configuration, so a
+    refused read means "no password", not an error."""
+    try:
+        return bool(read_secret(DEFAULT_PASSWORD_ENV, environ))
+    except VNCError:
+        return False
 
 
 def password_from_env(name: Optional[str], environ: Optional[Mapping[str, str]] = None) -> Optional[str]:
@@ -207,7 +218,7 @@ class VNCTransport:
         if not address:
             raise VNCError("no VNC address configured (settings.vnc or BAREHAND_VNC, e.g. 127.0.0.1:5900)")
         pw_env = str(settings.get("vnc_password_env") or "").strip() or (
-            DEFAULT_PASSWORD_ENV if read_secret(DEFAULT_PASSWORD_ENV, environ) else None)
+            DEFAULT_PASSWORD_ENV if _default_password_set(environ) else None)
         enc = settings.get("vnc_encodings")
         if isinstance(enc, str):
             enc = [e.strip() for e in enc.split(",") if e.strip()]

@@ -29,7 +29,10 @@ def _vnc_checks(r: "config.Resolved") -> List[Check]:
     pw_env = str(r.settings.get("vnc_password_env") or "").strip()
     password = None
     if pw_env:
-        password = read_secret(pw_env)
+        try:
+            password = read_secret(pw_env)
+        except Exception as exc:  # noqa: BLE001 - Hermes refused the read for this profile
+            return out + [("fail", "password", str(exc))]
         out.append(("ok", "password", f"read from ${pw_env}") if password else
                    ("fail", "password", f"environment variable {pw_env} (vnc_password_env) is not set or empty"))
         if not password:
